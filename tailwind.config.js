@@ -34,7 +34,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['"DM Sans"', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['"Fraunces"', '"Outfit"', 'serif'],
+        display: ['"Bricolage Grotesque"', '"DM Sans"', 'sans-serif'],
         mono: ['"Space Grotesk"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       boxShadow: {

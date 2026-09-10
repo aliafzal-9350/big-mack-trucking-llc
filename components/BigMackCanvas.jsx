@@ -35,23 +35,45 @@ function CanvasLoader() {
   );
 }
 
-function Model({ activePreset, isAutoRotating }) {
+// Cinematic entrance (settle into place on mount), a faint idle bob, and a
+// subtle mouse-parallax lean — all skipped when the visitor prefers reduced
+// motion, leaving only the functional (user-triggered) preset rotation.
+function Model({ activePreset, isAutoRotating, reducedMotion }) {
   const groupRef = useRef();
+  const elapsed = useRef(0);
+  const parallaxLift = useRef(0);
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
+    elapsed.current += delta;
+
+    const pointerX = reducedMotion ? 0 : state.pointer.x;
+    const pointerY = reducedMotion ? 0 : state.pointer.y;
 
     if (isAutoRotating && activePreset === 'orbit') {
       groupRef.current.rotation.y += delta * 0.25;
     } else {
-      const target = PRESET_ROTATION[activePreset] ?? PRESET_ROTATION.front;
+      const baseTarget = PRESET_ROTATION[activePreset] ?? PRESET_ROTATION.front;
       groupRef.current.rotation.y = THREE.MathUtils.damp(
         groupRef.current.rotation.y,
-        target,
+        baseTarget + pointerX * 0.05,
         3.2,
         delta
       );
     }
+
+    parallaxLift.current = THREE.MathUtils.damp(parallaxLift.current, pointerY * 0.04, 4, delta);
+
+    let entranceY = 0;
+    let idleY = 0;
+    if (!reducedMotion) {
+      const t = Math.min(elapsed.current / 1.4, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      entranceY = (eased - 1) * 0.7;
+      idleY = Math.sin(elapsed.current * 0.6) * 0.035;
+    }
+
+    groupRef.current.position.y = entranceY + idleY + parallaxLift.current;
   });
 
   return (
@@ -91,6 +113,7 @@ class CanvasErrorBoundary extends React.Component {
 
 export default function BigMackCanvas({ activePreset = 'front', isAutoRotating = false }) {
   const [hasWebGL, setHasWebGL] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
     try {
@@ -100,6 +123,14 @@ export default function BigMackCanvas({ activePreset = 'front', isAutoRotating =
     } catch {
       setHasWebGL(false);
     }
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mq.matches);
+    const handler = (e) => setReducedMotion(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
   }, []);
 
   if (!hasWebGL) {
@@ -157,7 +188,7 @@ export default function BigMackCanvas({ activePreset = 'front', isAutoRotating =
           </Environment>
 
           <Suspense fallback={null}>
-            <Model activePreset={activePreset} isAutoRotating={isAutoRotating} />
+            <Model activePreset={activePreset} isAutoRotating={isAutoRotating} reducedMotion={reducedMotion} />
             <ContactShadows
               position={[0, 0.01, 0]}
               opacity={0.78}

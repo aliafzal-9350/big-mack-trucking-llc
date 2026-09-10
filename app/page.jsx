@@ -21,7 +21,7 @@ import {
   FileText
 } from 'lucide-react';
 import Reveal from '@/components/Reveal';
-import logoImage from '@/public/image/logo.jpeg';
+import logoBadge from '@/public/image/logo-transparent.png';
 
 // TODO: replace with your real Formspree form ID (create a free account at
 // formspree.io using Bigmacklogisticsa1@gmail.com, then swap the value below).
@@ -59,6 +59,15 @@ export default function HomePage() {
   const [formSent, setFormSent] = useState(false);
   const [formError, setFormError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [heroMounted, setHeroMounted] = useState(false);
+
+  React.useEffect(() => {
+    const frame = requestAnimationFrame(() => setHeroMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const heroReveal = `transition-all duration-700 ease-out ${heroMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`;
+  const heroRevealStyle = (delayMs) => ({ transitionDelay: heroMounted ? `${delayMs}ms` : '0ms' });
 
   const handlePresetSelect = (preset) => {
     setActivePreset(preset);
@@ -127,34 +136,47 @@ export default function HomePage() {
       <header className="border-b border-white/10 bg-obsidian-900/85 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
           <a href="#hero" className="flex items-center gap-3.5 group">
-            <div className="relative w-32 sm:w-40 h-14 rounded-md bg-paper p-1 flex items-center justify-start overflow-hidden transition-transform duration-300 group-hover:scale-[1.02] flex-shrink-0">
+            <div className="relative h-11 w-11 sm:h-[52px] sm:w-[52px] flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
               <Image
-                src={logoImage}
+                src={logoBadge}
                 alt="Big Mack Trucking LLC logo"
                 priority
-                className="w-full h-full object-contain object-left"
+                fill
+                sizes="52px"
+                className="object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
               />
             </div>
             <div>
-              <span className="text-xl sm:text-2xl font-black tracking-tight text-white block leading-none font-display">
+              <span className="text-lg sm:text-xl font-semibold tracking-tight text-white block leading-none font-display">
                 Big Mack<span className="text-purple-400">.</span>
               </span>
-              <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase block mt-1">
+              <span className="text-[9px] sm:text-[10px] font-mono tracking-widest text-slate-400 uppercase block mt-1.5">
                 Trucking LLC — Expedited Freight
               </span>
             </div>
           </a>
 
           <nav className="hidden lg:flex items-center gap-8 text-sm text-slate-300">
-            <a href="#hero" className="text-white font-medium hover:text-purple-300 transition">Overview</a>
-            <a href="#equipment" className="hover:text-white transition">Equipment</a>
-            <a href="#twic" className="hover:text-white transition">Credentials</a>
-            <a href="#dispatch" className="hover:text-white transition">Get a Quote</a>
+            {[
+              { href: '#hero', label: 'Overview', active: true },
+              { href: '#equipment', label: 'Equipment' },
+              { href: '#twic', label: 'Credentials' },
+              { href: '#dispatch', label: 'Get a Quote' },
+            ].map(({ href, label, active }) => (
+              <a
+                key={href}
+                href={href}
+                className={`relative py-1 transition-colors group ${active ? 'text-white font-medium' : 'hover:text-white'}`}
+              >
+                {label}
+                <span className={`absolute left-0 -bottom-0.5 h-px bg-purple-400 transition-all duration-300 ${active ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              </a>
+            ))}
           </nav>
 
           <a
             href="tel:5165088078"
-            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold tracking-wide uppercase px-5 py-3 rounded-xl transition"
+            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold tracking-wide uppercase px-5 py-3 rounded-xl transition-all hover:scale-[1.03] hover:shadow-lg hover:shadow-purple-600/20"
           >
             <Phone className="w-3.5 h-3.5" />
             <span>Call Now</span>
@@ -169,37 +191,37 @@ export default function HomePage() {
         <div className="hidden md:block absolute inset-0 z-[1] pointer-events-none bg-gradient-to-r from-obsidian-900/75 via-obsidian-900/15 to-transparent" />
 
         <div className="relative z-10 max-w-xl mt-2 sm:mt-6 md:pointer-events-none">
-          <p className="text-xs font-mono uppercase tracking-widest text-purple-300 mb-4">
+          <p className={`text-xs font-mono uppercase tracking-widest text-purple-300 mb-4 ${heroReveal}`} style={heroRevealStyle(0)}>
             Omari Headley, Owner-Operator
           </p>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-medium tracking-tight text-white leading-[1.02] font-display">
+          <h1 className={`text-[2.75rem] sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-semibold tracking-tight text-white leading-[1.03] font-display ${heroReveal}`} style={heroRevealStyle(90)}>
             Freight you can<br />
             <span className="purple-gradient-text">count on.</span>
           </h1>
 
-          <p className="mt-5 text-sm sm:text-base text-slate-300 leading-relaxed max-w-md">
+          <p className={`mt-5 text-sm sm:text-base text-slate-300 leading-relaxed max-w-md ${heroReveal}`} style={heroRevealStyle(220)}>
             A dock-high 26ft box truck equipped with a heavy-duty liftgate, onboard pallet jack, and certified TWIC access — built for expedited freight across the NY/NJ region.
           </p>
 
-          <div className="mt-7 flex flex-wrap gap-3 pointer-events-auto">
+          <div className={`mt-7 flex flex-wrap gap-3 pointer-events-auto ${heroReveal}`} style={heroRevealStyle(340)}>
             <a
               href="#dispatch"
-              className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-widest px-7 py-4 rounded-xl transition flex items-center gap-2"
+              className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-widest px-7 py-4 rounded-xl transition-all hover:scale-[1.03] flex items-center gap-2"
             >
               Get a Quote
               <ArrowUpRight className="w-4 h-4" />
             </a>
             <a
               href="tel:5165088078"
-              className="border border-white/15 hover:border-white/30 text-white text-xs tracking-wider uppercase px-6 py-4 rounded-xl transition backdrop-blur-md flex items-center gap-2"
+              className="border border-white/15 hover:border-white/30 hover:bg-white/5 text-white text-xs tracking-wider uppercase px-6 py-4 rounded-xl transition-all backdrop-blur-md flex items-center gap-2"
             >
               <Phone className="w-3.5 h-3.5 text-purple-300" />
               <span>(516) 508-8078</span>
             </a>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-6 mt-6 border-t border-white/10 max-w-md">
+          <div className={`grid grid-cols-3 gap-4 sm:gap-6 pt-6 mt-6 border-t border-white/10 max-w-md ${heroReveal}`} style={heroRevealStyle(440)}>
             <div>
               <span className="text-[10px] text-slate-400 uppercase tracking-wide block font-mono">GVWR</span>
               <span className="text-sm font-bold text-white">26,000 LBS</span>
@@ -246,20 +268,20 @@ export default function HomePage() {
 
       </section>
 
-      {/* EQUIPMENT */}
-      <section id="equipment" className="border-t border-white/10 bg-obsidian-950 py-24 sm:py-32 px-4 sm:px-8">
+      {/* EQUIPMENT — light band for visual rhythm against the dark hero/footer */}
+      <section id="equipment" className="bg-paper py-24 sm:py-32 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto">
 
           <Reveal className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
             <div>
-              <span className="text-xs font-mono uppercase tracking-widest text-purple-300 block mb-2">
+              <span className="text-xs font-mono uppercase tracking-widest text-purple-700 block mb-2">
                 Equipment
               </span>
-              <h2 className="text-3xl sm:text-5xl font-medium tracking-tight text-white font-display">
+              <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-obsidian-950 font-display">
                 Built for the work.
               </h2>
             </div>
-            <p className="text-slate-400 text-sm max-w-lg leading-relaxed">
+            <p className="text-slate-600 text-sm max-w-lg leading-relaxed">
               Big Mack Trucking LLC runs professional-grade commercial equipment designed to eliminate freight handling bottlenecks at shipping docks, ports, and job sites.
             </p>
           </Reveal>
@@ -296,14 +318,14 @@ export default function HomePage() {
               },
             ].map((card, i) => (
               <Reveal key={card.eyebrow} delay={i * 90}>
-                <div className="h-full bg-obsidian-800 border border-white/10 p-7 rounded-3xl hover:border-purple-400/30 transition-colors">
-                  <div className="w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center text-purple-300 mb-6">
+                <div className="h-full bg-white border border-black/[0.06] p-7 rounded-3xl shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:border-purple-400/40 hover:shadow-[0_12px_32px_-12px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-2xl border border-black/[0.08] flex items-center justify-center text-purple-600 mb-6">
                     <card.icon className="w-6 h-6" />
                   </div>
-                  <span className="text-[10px] font-mono text-purple-300 tracking-wider uppercase block">{card.eyebrow}</span>
-                  <h3 className="text-xl font-semibold text-white mt-1 mb-3 font-display">{card.title}</h3>
-                  <p className="text-slate-400 text-xs leading-relaxed mb-4">{card.body}</p>
-                  <div className="pt-4 border-t border-white/10 text-[11px] text-slate-400 space-y-1.5">
+                  <span className="text-[10px] font-mono text-purple-600 tracking-wider uppercase block">{card.eyebrow}</span>
+                  <h3 className="text-xl font-semibold text-obsidian-950 mt-1 mb-3 font-display">{card.title}</h3>
+                  <p className="text-slate-600 text-xs leading-relaxed mb-4">{card.body}</p>
+                  <div className="pt-4 border-t border-black/[0.06] text-[11px] text-slate-600 space-y-1.5">
                     {card.points.map((p) => <p key={p}>{p}</p>)}
                   </div>
                 </div>
@@ -322,7 +344,7 @@ export default function HomePage() {
                 <ShieldCheck className="w-4 h-4" />
                 Transportation Worker Identification Credential
               </span>
-              <h2 className="text-3xl sm:text-4xl font-medium text-white font-display">
+              <h2 className="text-3xl sm:text-4xl font-semibold text-white font-display">
                 Unrestricted maritime port access.
               </h2>
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
@@ -372,7 +394,7 @@ export default function HomePage() {
                 Book Direct
               </div>
 
-              <h2 className="text-3xl sm:text-5xl font-medium text-white font-display">
+              <h2 className="text-3xl sm:text-5xl font-semibold text-white font-display">
                 Booking made simple.
               </h2>
 
@@ -383,7 +405,7 @@ export default function HomePage() {
               <div className="space-y-4 pt-2">
                 <a
                   href="tel:5165088078"
-                  className="bg-obsidian-700 hover:bg-obsidian-650 p-5 rounded-2xl border border-white/10 flex items-center gap-4 transition group block"
+                  className="bg-obsidian-700 hover:bg-obsidian-650 p-5 rounded-2xl border border-white/10 hover:border-purple-400/30 flex items-center gap-4 transition-all hover:-translate-y-0.5 group block"
                 >
                   <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-purple-300 flex-shrink-0">
                     <Phone className="w-6 h-6" />
@@ -399,7 +421,7 @@ export default function HomePage() {
 
                 <a
                   href="mailto:Bigmacklogisticsa1@gmail.com"
-                  className="bg-obsidian-700 hover:bg-obsidian-650 p-5 rounded-2xl border border-white/10 flex items-center gap-4 transition group block"
+                  className="bg-obsidian-700 hover:bg-obsidian-650 p-5 rounded-2xl border border-white/10 hover:border-purple-400/30 flex items-center gap-4 transition-all hover:-translate-y-0.5 group block"
                 >
                   <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-purple-300 flex-shrink-0">
                     <Mail className="w-6 h-6" />
@@ -569,19 +591,21 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-white/10 text-sm">
 
             <Reveal className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-44 h-20 rounded-md bg-paper p-1 flex items-center overflow-hidden flex-shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="relative h-16 w-16 flex-shrink-0">
                   <Image
-                    src={logoImage}
+                    src={logoBadge}
                     alt="Big Mack Trucking LLC official logo"
-                    className="w-full h-full object-contain object-left"
+                    fill
+                    sizes="64px"
+                    className="object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
                   />
                 </div>
                 <div>
-                  <span className="text-base font-semibold tracking-tight text-white block font-display">
+                  <span className="text-lg font-semibold tracking-tight text-white block font-display">
                     Big Mack Trucking LLC
                   </span>
-                  <span className="text-[10px] text-purple-300 uppercase font-mono">Expedited Freight</span>
+                  <span className="text-[10px] text-purple-300 uppercase font-mono tracking-widest">Expedited Freight</span>
                 </div>
               </div>
               <p className="text-slate-400 leading-relaxed text-[11px]">
