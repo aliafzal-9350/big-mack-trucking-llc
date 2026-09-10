@@ -94,6 +94,14 @@ img, canvas, svg {
   -webkit-text-fill-color: transparent;
 }
 
+/* Light-theme counterpart -- the white-based gradient above is invisible
+   on a light background, so swap to a dark-to-brand-purple gradient. */
+.purple-gradient-text-light {
+  background: linear-gradient(135deg, #17151a 8%, #4d286f 48%, #7440a8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 /* Pulse animation utility, reserved for primary CTAs only */
 @keyframes pulseGlow {
   0%, 100% {

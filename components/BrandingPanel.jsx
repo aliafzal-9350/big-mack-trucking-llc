@@ -4,9 +4,12 @@ import React, { useEffect } from 'react';
 import { Text, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 
-// Reusable logo + wordmark + compliance-line decal, used for both cargo-box
-// sides and the rear door. `rotation` controls which way the panel faces.
-export default function BrandingPanel({ position, rotation = [0, 0, 0], logoSize = 0.6, textScale = 1 }) {
+// Reusable logo decal + small compliance line, used for both cargo-box
+// sides and the rear door. The logo art already bakes in the "BIG MACK
+// TRUCKING" wordmark, so we don't duplicate it as separate 3D text --
+// matching a clean vinyl-wrap look instead of a stacked HTML-label feel.
+// `rotation` controls which way the panel faces.
+export default function BrandingPanel({ position, rotation = [0, 0, 0], logoSize = 0.62, textScale = 1 }) {
   const logoTexture = useTexture('/image/logo-transparent.png');
 
   useEffect(() => {
@@ -16,45 +19,35 @@ export default function BrandingPanel({ position, rotation = [0, 0, 0], logoSize
     }
   }, [logoTexture]);
 
-  const forceFrontSide = (t) => {
-    if (t.material) t.material.side = THREE.FrontSide;
+  // DoubleSide so the decal shows up regardless of which way the panel
+  // ends up facing after rotation -- avoids invisible-decal bugs from a
+  // flipped normal being fully backface-culled.
+  const forceDoubleSide = (t) => {
+    if (t.material) t.material.side = THREE.DoubleSide;
   };
 
   return (
     <group position={position} rotation={rotation}>
-      <mesh position={[0, logoSize * 0.42, 0]}>
+      <mesh position={[0, logoSize * 0.06, 0]}>
         <planeGeometry args={[logoSize, logoSize]} />
         <meshStandardMaterial
           map={logoTexture}
           transparent
-          roughness={0.25}
-          metalness={0.1}
+          roughness={0.3}
+          metalness={0.05}
           depthWrite={false}
           polygonOffset
           polygonOffsetFactor={-4}
-          side={THREE.FrontSide}
+          side={THREE.DoubleSide}
         />
       </mesh>
       <Text
-        material-side={THREE.FrontSide}
-        onSync={forceFrontSide}
-        position={[0, -logoSize * 0.16, 0]}
-        fontSize={0.1 * textScale}
+        material-side={THREE.DoubleSide}
+        onSync={forceDoubleSide}
+        position={[0, -logoSize * 0.56, 0]}
+        fontSize={0.048 * textScale}
         letterSpacing={0.03}
         color="#FFFFFF"
-        anchorX="center"
-        anchorY="middle"
-        fontWeight="900"
-      >
-        BIG MACK TRUCKING
-      </Text>
-      <Text
-        material-side={THREE.FrontSide}
-        onSync={forceFrontSide}
-        position={[0, -logoSize * 0.16 - 0.09 * textScale, 0]}
-        fontSize={0.05 * textScale}
-        letterSpacing={0.03}
-        color="#C9A9E0"
         anchorX="center"
         anchorY="middle"
         fontWeight="bold"

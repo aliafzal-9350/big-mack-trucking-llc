@@ -4,21 +4,23 @@ import React from 'react';
 import * as THREE from 'three';
 import { Text } from '@react-three/drei';
 import BrandingPanel from './BrandingPanel';
-import { TRUCK, TRUCK_LAYOUT } from './TruckModel';
 
-// Small monochrome compliance stencil on each cab door, matching the real truck.
+// Coordinates below are already in the primitive's FINAL rendered scale
+// (i.e. post the primitive's own scale={34} in BigMackCanvas.jsx) -- do not
+// wrap this in another scale, or every position ends up ~34x too far from
+// the truck (invisible, off in empty space). Tuned against this specific
+// truck.glb's geometry. Model convention: front (grille) faces +Z, rear
+// faces -Z, driver side -X.
+const doorText = `BIG MACK TRUCKING\nUSDOT: 3843409\nMC: 1398475`;
+
 function CabStencil({ side }) {
-  const x = side * (TRUCK.cabWidth / 2 + 0.008);
-  const y = TRUCK.frameTop + TRUCK.cabHeight * 0.42;
-  const z = TRUCK_LAYOUT.hoodEndZ + TRUCK.cabinLength * 0.42;
-
   return (
-    <group position={[x, y, z]} rotation={[0, side * (Math.PI / 2), 0]}>
+    <group position={[side * 0.416, 0.48, 0.92]} rotation={[0, side * (-Math.PI / 2), 0]}>
       <Text
-        material-side={THREE.FrontSide}
-        onSync={(t) => { if (t.material) t.material.side = THREE.FrontSide; }}
-        fontSize={0.028}
-        lineHeight={1.35}
+        material-side={THREE.DoubleSide}
+        onSync={(t) => { if (t.material) t.material.side = THREE.DoubleSide; }}
+        fontSize={0.026}
+        lineHeight={1.3}
         color="#FFFFFF"
         anchorX="center"
         anchorY="middle"
@@ -26,40 +28,24 @@ function CabStencil({ side }) {
         fontWeight="bold"
         letterSpacing={0.02}
       >
-        {`BIG MACK TRUCKING\nUSDOT: 3843409\nMC: 1398475`}
+        {doorText}
       </Text>
     </group>
   );
 }
 
 export default function TruckDecals() {
-  const boxMidZ = (TRUCK_LAYOUT.boxStartZ + TRUCK_LAYOUT.rearZ) / 2;
-  const boxCenterY = TRUCK.frameTop + TRUCK.boxHeight * 0.56;
-
   return (
     <group>
       <CabStencil side={-1} />
       <CabStencil side={1} />
 
-      {/* Driver-side box branding (panel faces -X, outward) */}
-      <BrandingPanel
-        position={[-(TRUCK.boxWidth / 2 + 0.02), boxCenterY, boxMidZ]}
-        rotation={[0, -Math.PI / 2, 0]}
-        logoSize={0.62}
-      />
-      {/* Passenger-side box branding (panel faces +X, outward) */}
-      <BrandingPanel
-        position={[TRUCK.boxWidth / 2 + 0.02, boxCenterY, boxMidZ]}
-        rotation={[0, Math.PI / 2, 0]}
-        logoSize={0.62}
-      />
-      {/* Rear door branding (panel faces +Z, outward — no rotation needed) */}
-      <BrandingPanel
-        position={[0, boxCenterY, TRUCK_LAYOUT.rearZ + 0.02]}
-        rotation={[0, 0, 0]}
-        logoSize={0.72}
-        textScale={1.1}
-      />
+      {/* Driver-side cargo box (panel faces -X, outward) */}
+      <BrandingPanel position={[-0.441, 0.68, -0.39]} rotation={[0, -Math.PI / 2, 0]} logoSize={0.62} />
+      {/* Passenger-side cargo box (panel faces +X, outward) */}
+      <BrandingPanel position={[0.441, 0.68, -0.39]} rotation={[0, Math.PI / 2, 0]} logoSize={0.62} />
+      {/* Rear roll-up door (panel faces -Z, outward) */}
+      <BrandingPanel position={[0, 0.68, -1.312]} rotation={[0, Math.PI, 0]} logoSize={0.7} textScale={1.1} />
     </group>
   );
 }
