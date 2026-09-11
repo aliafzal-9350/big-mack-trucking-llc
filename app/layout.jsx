@@ -1,4 +1,28 @@
+import { DM_Sans, Bricolage_Grotesque, Space_Grotesk } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-dm-sans',
+  weight: ['300', '400', '500', '600', '700', '800'],
+});
+
+const bricolageGrotesque = Bricolage_Grotesque({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-bricolage',
+  weight: ['400', '500', '600', '700', '800'],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-space-grotesk',
+  weight: ['400', '500', '600', '700'],
+});
 
 export const metadata = {
   metadataBase: new URL('https://bigmacktrucking.com'),
@@ -37,9 +61,20 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="dark scroll-smooth">
-      <body className="bg-[#08040C] text-slate-100 selection:bg-purple-600 selection:text-white min-h-screen antialiased">
+    <html
+      lang="en"
+      className={`dark scroll-smooth ${dmSans.variable} ${bricolageGrotesque.variable} ${spaceGrotesk.variable}`}
+    >
+      <head>
+        {/* Preload critical 3D GLB model so browser streams it immediately upon HTML delivery */}
+        <link rel="preload" href="/models/truck.glb" as="fetch" crossOrigin="anonymous" />
+        {/* Preload high-resolution brand logo emblem with high fetch priority */}
+        <link rel="preload" href="/image/logo-transparent.png" as="image" fetchPriority="high" />
+      </head>
+      <body className="bg-[#08040C] text-slate-100 selection:bg-purple-600 selection:text-white min-h-screen antialiased font-sans">
         {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

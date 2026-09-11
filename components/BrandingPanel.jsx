@@ -4,49 +4,53 @@ import React, { useEffect } from 'react';
 import { Text, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 
-// Reusable logo decal + small compliance line, used for both cargo-box
-// sides and the rear door. The logo art already bakes in the "BIG MACK
-// TRUCKING" wordmark, so we don't duplicate it as separate 3D text --
-// matching a clean vinyl-wrap look instead of a stacked HTML-label feel.
-// `rotation` controls which way the panel faces.
-export default function BrandingPanel({ position, rotation = [0, 0, 0], logoSize = 0.62, textScale = 1 }) {
+// Reusable logo decal + compliance line, centered across cargo-box sides
+// and rear rollup door. Tuned to ensure high fidelity, non-mirrored reading,
+// and balanced vertical/horizontal centroid.
+export default function BrandingPanel({ position, rotation = [0, 0, 0], logoSize = 0.44, textScale = 1 }) {
   const logoTexture = useTexture('/image/logo-transparent.png');
 
   useEffect(() => {
     if (logoTexture) {
       logoTexture.anisotropy = 16;
+      logoTexture.generateMipmaps = true;
+      logoTexture.minFilter = THREE.LinearMipmapLinearFilter;
+      logoTexture.magFilter = THREE.LinearFilter;
       logoTexture.needsUpdate = true;
     }
   }, [logoTexture]);
 
-  // DoubleSide so the decal shows up regardless of which way the panel
-  // ends up facing after rotation -- avoids invisible-decal bugs from a
-  // flipped normal being fully backface-culled.
   const forceDoubleSide = (t) => {
-    if (t.material) t.material.side = THREE.DoubleSide;
+    if (t.material) {
+      t.material.side = THREE.DoubleSide;
+      t.material.toneMapped = false;
+    }
   };
 
   return (
     <group position={position} rotation={rotation}>
-      <mesh position={[0, logoSize * 0.06, 0]}>
+      {/* High resolution circular emblem */}
+      <mesh position={[0, logoSize * 0.12, 0]}>
         <planeGeometry args={[logoSize, logoSize]} />
         <meshStandardMaterial
           map={logoTexture}
           transparent
-          roughness={0.3}
-          metalness={0.05}
+          roughness={0.22}
+          metalness={0.08}
           depthWrite={false}
           polygonOffset
           polygonOffsetFactor={-4}
           side={THREE.DoubleSide}
         />
       </mesh>
+
+      {/* Official compliance wordmark */}
       <Text
         material-side={THREE.DoubleSide}
         onSync={forceDoubleSide}
-        position={[0, -logoSize * 0.56, 0]}
-        fontSize={0.048 * textScale}
-        letterSpacing={0.03}
+        position={[0, -logoSize * 0.48, 0]}
+        fontSize={0.044 * textScale}
+        letterSpacing={0.04}
         color="#FFFFFF"
         anchorX="center"
         anchorY="middle"
@@ -57,3 +61,4 @@ export default function BrandingPanel({ position, rotation = [0, 0, 0], logoSize
     </group>
   );
 }
+

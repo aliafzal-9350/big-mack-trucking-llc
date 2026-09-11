@@ -49,8 +49,8 @@ const PRESETS = [
 
 export default function HomePage() {
   const [theme, setTheme] = useState('dark');
-  const [activePreset, setActivePreset] = useState('front');
-  const [isAutoRotating, setIsAutoRotating] = useState(false);
+  const [activePreset, setActivePreset] = useState('orbit');
+  const [isAutoRotating, setIsAutoRotating] = useState(true);
 
   const [origin, setOrigin] = useState('JFK Air Cargo (NY)');
   const [destination, setDestination] = useState('Port Newark (NJ)');
@@ -70,6 +70,15 @@ export default function HomePage() {
       if (saved === 'light' || saved === 'dark') setTheme(saved);
     } catch {
       // ignore -- private browsing / storage blocked
+    }
+
+    // Eagerly pre-warm 3D model asset stream in the background
+    if (typeof window !== 'undefined') {
+      try {
+        fetch('/models/truck.glb', { priority: 'high' }).catch(() => {});
+        const img = new window.Image();
+        img.src = '/image/logo-transparent.png';
+      } catch (_) {}
     }
   }, []);
 
@@ -176,6 +185,30 @@ export default function HomePage() {
   return (
     <div className={`min-h-screen font-sans selection:bg-purple-600 selection:text-white antialiased overflow-x-hidden transition-colors duration-300 ${T.page}`}>
 
+      {/* Imprinted brand watermark in page background -- visible & elegant across mobile, tablet, and desktop */}
+      <div
+        className={`fixed right-[-50px] top-[-20px] w-[320px] h-[320px] sm:w-[480px] sm:h-[480px] md:right-[-70px] md:top-[-35px] lg:right-[-100px] lg:top-[-60px] lg:w-[640px] lg:h-[640px] xl:w-[740px] xl:h-[740px] pointer-events-none select-none z-0 transition-all duration-500 ${
+          isDark ? 'opacity-[0.16] sm:opacity-[0.18]' : 'opacity-[0.08] sm:opacity-[0.09]'
+        }`}
+      >
+        {isDark ? (
+          <div className="absolute inset-16 rounded-full bg-purple-600/20 blur-3xl -z-10" />
+        ) : (
+          <div className="absolute inset-16 rounded-full bg-purple-400/20 blur-3xl -z-10" />
+        )}
+        <Image
+          src={logoBadge}
+          alt=""
+          fill
+          priority
+          className={`object-contain transition-all duration-500 ${
+            isDark
+              ? 'filter drop-shadow-[0_0_36px_rgba(168,85,247,0.18)]'
+              : 'filter drop-shadow-[0_4px_20px_rgba(75,30,130,0.08)]'
+          }`}
+        />
+      </div>
+
       {/* TOP COMPLIANCE BAR */}
       <div className={`border-b text-xs py-2 px-4 sm:px-8 transition-colors duration-300 ${T.topBarBg}`}>
         <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
@@ -210,13 +243,14 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
           <a href="#hero" className="flex items-center gap-3.5 group flex-shrink-0">
             <div className="relative h-11 w-11 sm:h-[52px] sm:w-[52px] flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
+              {isDark && <div className="absolute -inset-1 rounded-full bg-purple-500/25 blur-md" />}
               <Image
                 src={logoBadge}
                 alt="Big Mack Trucking LLC logo"
                 priority
                 fill
                 sizes="52px"
-                className="object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
+                className="relative object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]"
               />
             </div>
             <div>
@@ -320,7 +354,28 @@ export default function HomePage() {
         </div>
 
         {/* 3D truck: its own boxed panel in normal flow on mobile, full-bleed background overlay from md+ */}
-        <div className={`relative order-2 w-full h-[52vh] min-h-[340px] mt-6 rounded-3xl overflow-hidden border md:order-none md:absolute md:inset-0 md:z-0 md:h-auto md:min-h-0 md:w-auto md:mt-0 md:rounded-none md:border-0 ${T.hairline}`}>
+        <div className={`relative order-2 w-full h-[54vh] min-h-[380px] max-h-[500px] mt-6 rounded-3xl overflow-hidden border md:order-none md:absolute md:inset-0 md:z-0 md:h-auto md:min-h-0 md:max-h-none md:w-auto md:mt-0 md:rounded-none md:border-0 ${T.hairline}`}>
+          {/* In-viewport brand watermark badge: prominent & sharp on mobile card, hidden on desktop where hero text is placed */}
+          <div className="md:hidden absolute top-3.5 left-3.5 sm:top-5 sm:left-5 z-20 flex items-center gap-2.5 pointer-events-none bg-black/50 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/10 shadow-lg">
+            <div className="relative w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+              <Image src={logoBadge} alt="Big Mack" fill className="object-contain drop-shadow" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-mono text-[10px] sm:text-[11px] tracking-wider text-purple-200 uppercase font-bold leading-none">
+                Big Mack Trucking
+              </span>
+              <span className="font-mono text-[8px] sm:text-[9px] tracking-widest text-slate-400 uppercase leading-none mt-1">
+                26FT Dock-High • 3D View
+              </span>
+            </div>
+          </div>
+
+          {/* Touch interaction hint badge on mobile */}
+          <div className="md:hidden absolute bottom-3 left-3.5 z-20 flex items-center gap-1.5 pointer-events-none bg-black/45 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10 font-mono text-[9px] sm:text-[10px] text-slate-300">
+            <RotateCw className="w-3 h-3 text-purple-400" />
+            <span>Rotate 360° • Pinch to zoom</span>
+          </div>
+
           <BigMackCanvas activePreset={activePreset} isAutoRotating={isAutoRotating} theme={theme} />
         </div>
 
@@ -331,7 +386,7 @@ export default function HomePage() {
               <button
                 key={id}
                 onClick={() => handlePresetSelect(id)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 transition ${
+                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 transition ${
                   activePreset === id
                     ? 'bg-white/10 text-white'
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
@@ -344,26 +399,26 @@ export default function HomePage() {
             ))}
           </div>
           <div className="mt-2 text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-            Drag to rotate
+            Drag to rotate • Pinch to zoom
           </div>
         </div>
 
       </section>
 
-      {/* EQUIPMENT — permanent light band for visual rhythm, unaffected by the theme toggle */}
-      <section id="equipment" className="bg-paper py-24 sm:py-32 px-4 sm:px-8">
+      {/* EQUIPMENT */}
+      <section id="equipment" className={`py-24 sm:py-32 px-4 sm:px-8 transition-colors duration-300 ${isDark ? 'bg-obsidian-950' : 'bg-paper'}`}>
         <div className="max-w-7xl mx-auto">
 
           <Reveal className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
             <div>
-              <span className="text-xs font-mono uppercase tracking-widest text-purple-700 block mb-2">
+              <span className={`text-xs font-mono uppercase tracking-widest block mb-2 ${T.accent}`}>
                 Equipment
               </span>
-              <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-obsidian-950 font-display">
+              <h2 className={`text-3xl sm:text-5xl font-semibold tracking-tight font-display ${T.heading}`}>
                 Built for the work.
               </h2>
             </div>
-            <p className="text-slate-600 text-sm max-w-lg leading-relaxed">
+            <p className={`text-sm max-w-lg leading-relaxed ${T.sectionBody}`}>
               Big Mack Trucking LLC runs professional-grade commercial equipment designed to eliminate freight handling bottlenecks at shipping docks, ports, and job sites.
             </p>
           </Reveal>
@@ -400,14 +455,14 @@ export default function HomePage() {
               },
             ].map((card, i) => (
               <Reveal key={card.eyebrow} delay={i * 90}>
-                <div className="h-full bg-white border border-black/[0.06] p-7 rounded-3xl shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:border-purple-400/40 hover:shadow-[0_12px_32px_-12px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 transition-all duration-300">
-                  <div className="w-12 h-12 rounded-2xl border border-black/[0.08] flex items-center justify-center text-purple-600 mb-6">
+                <div className={`h-full border p-7 rounded-3xl transition-all duration-300 hover:border-purple-400/40 hover:-translate-y-0.5 ${T.cardBg} ${T.cardBorder} ${T.cardShadow} ${T.cardHoverShadow}`}>
+                  <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center mb-6 ${T.iconTile} ${T.accent}`}>
                     <card.icon className="w-6 h-6" />
                   </div>
-                  <span className="text-[10px] font-mono text-purple-600 tracking-wider uppercase block">{card.eyebrow}</span>
-                  <h3 className="text-xl font-semibold text-obsidian-950 mt-1 mb-3 font-display">{card.title}</h3>
-                  <p className="text-slate-600 text-xs leading-relaxed mb-4">{card.body}</p>
-                  <div className="pt-4 border-t border-black/[0.06] text-[11px] text-slate-600 space-y-1.5">
+                  <span className={`text-[10px] font-mono tracking-wider uppercase block ${T.accent}`}>{card.eyebrow}</span>
+                  <h3 className={`text-xl font-semibold mt-1 mb-3 font-display ${T.heading}`}>{card.title}</h3>
+                  <p className={`text-xs leading-relaxed mb-4 ${T.sectionBody}`}>{card.body}</p>
+                  <div className={`pt-4 border-t text-[11px] space-y-1.5 ${T.hairline} ${T.sectionBody}`}>
                     {card.points.map((p) => <p key={p}>{p}</p>)}
                   </div>
                 </div>
@@ -677,12 +732,13 @@ export default function HomePage() {
             <Reveal className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="relative h-16 w-16 flex-shrink-0">
+                  {isDark && <div className="absolute -inset-1.5 rounded-full bg-purple-500/25 blur-md" />}
                   <Image
                     src={logoBadge}
                     alt="Big Mack Trucking LLC official logo"
                     fill
                     sizes="64px"
-                    className="object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
+                    className="relative object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]"
                   />
                 </div>
                 <div>

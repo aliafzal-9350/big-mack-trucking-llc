@@ -33,9 +33,9 @@ module.exports = {
         paper: '#f7f5f2',
       },
       fontFamily: {
-        sans: ['"DM Sans"', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['"Bricolage Grotesque"', '"DM Sans"', 'sans-serif'],
-        mono: ['"Space Grotesk"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        sans: ['var(--font-dm-sans)', '"DM Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['var(--font-bricolage)', '"Bricolage Grotesque"', '"DM Sans"', 'sans-serif'],
+        mono: ['var(--font-space-grotesk)', '"Space Grotesk"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       boxShadow: {
         'violet-glow': '0 0 25px rgba(168, 85, 247, 0.35)',
