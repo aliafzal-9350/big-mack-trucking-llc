@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir: process.env.NEXT_DIST_DIR || '.next', // TEMP(perf): separate build dir while dev runs
   reactStrictMode: true,
   compress: true,
   transpilePackages: ['three', '@react-three/fiber', '@react-three/drei'],
