@@ -723,16 +723,36 @@ html[data-stage='loading'] .hud-corners span:nth-child(4) { transform: translate
 .brand-badge {
   width: 44px;
   height: 44px;
+  flex-shrink: 0;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .brand-name {
   font-family: var(--font-display-stack);
   font-weight: 800;
-  font-size: 1.45rem;
+  font-size: 1.42rem;
   line-height: 1;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.brand-tag {
+  font-family: var(--font-text-stack);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 3px;
+  white-space: nowrap;
 }
 
 .hud-actions {
@@ -766,29 +786,44 @@ html[data-stage='loading'] .hud-corners span:nth-child(4) { transform: translate
 }
 
 .call {
-  display: grid;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   line-height: 1.1;
-  padding: 7px 16px;
+  padding: 8px 16px;
   border-radius: 10px;
   background: var(--violet);
   color: #fff;
   text-decoration: none;
   box-shadow: 0 10px 30px -14px rgba(107, 53, 160, 0.9);
-  transition: background-color 0.25s var(--ease);
+  transition: background-color 0.25s var(--ease), transform 0.2s var(--ease);
 }
 
 .call:hover {
   background: var(--violet-hi);
+  transform: translateY(-1px);
+}
+
+.call-icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.call-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .call-label {
   font-size: 0.72rem;
-  opacity: 0.8;
+  opacity: 0.82;
 }
 
 .call-number {
   font-weight: 700;
   font-size: 0.98rem;
+  white-space: nowrap;
 }
 
 /* stop rail */
@@ -1610,83 +1645,101 @@ html[data-theme='day'] .quote-error {
   .scroll-cue,
   .shift-label,
   .call-label {
-    display: none;
+    display: none !important;
   }
 
   .hud-top {
     padding: 12px 14px 0;
+    gap: 8px;
+  }
+
+  .brand {
+    gap: 9px;
+    min-width: 0;
+    flex-shrink: 1;
   }
 
   .brand-badge {
     width: 38px;
     height: 38px;
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .brand-name {
-    font-size: 1.2rem;
+    font-size: clamp(0.92rem, 3.8vw, 1.15rem);
+    letter-spacing: 0.02em;
+    font-weight: 800;
+    line-height: 1.05;
+    white-space: nowrap;
+    display: block !important;
+  }
+
+  .brand-tag {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 2px;
+    white-space: nowrap;
+    display: block !important;
+  }
+
+  .hud-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
   }
 
   .shift-toggle {
-    padding: 0 8px;
+    height: 38px;
+    width: 38px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+  }
+
+  .shift-icon {
+    width: 24px;
+    height: 24px;
   }
 
   .call {
-    padding: 0 14px;
-    height: 44px;
-    align-content: center;
+    height: 38px;
+    padding: 0 12px;
+    gap: 6px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 10px;
+    white-space: nowrap;
   }
 
-  /* Telemetry becomes one quiet strip under the top bar. */
-  .hud-telemetry {
-    top: 64px;
-    left: 12px;
-    right: 12px;
-    bottom: auto;
-    gap: 16px;
-    align-items: baseline;
-    padding: 7px 12px 8px;
-    border-radius: 12px 12px 0 0;
-    border-bottom: 0;
+  .call-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
   }
 
-  .readout {
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
+  .call-number {
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
   }
 
-  .readout.readout-wide {
-    display: none;
-  }
-
-  .readout-label {
-    display: none;
-  }
-
-  .readout-status .readout-value {
-    font-size: 1.15rem;
-    min-width: 0;
-  }
-
-  .readout-value {
-    font-size: 0.95rem;
-  }
-
-  .hud-route {
-    top: 100px;
-    bottom: auto;
-    left: 12px;
-    right: 12px;
-    width: auto;
-    font-size: 0.7rem;
-    padding: 4px 12px 9px;
-    border-radius: 0 0 12px 12px;
-    border-top: 0;
-  }
-
+  /* Telemetry, route bar, and port stamp are hidden on mobile/tablet viewports so the truck is unobstructed */
+  .hud-telemetry,
+  .hud-route,
   .hud-stamp {
-    top: 138px;
-    font-size: 0.85rem;
+    display: none !important;
   }
 
   .hotspot-card {
@@ -1816,9 +1869,61 @@ html[data-theme='day'] .quote-error {
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 390px) {
+  .hud-top {
+    padding: 10px 10px 0;
+    gap: 6px;
+  }
+
+  .brand {
+    gap: 7px;
+  }
+
+  .brand-badge {
+    width: 34px;
+    height: 34px;
+  }
+
   .brand-name {
-    display: none;
+    font-size: 0.88rem;
+  }
+
+  .brand-tag {
+    font-size: 0.52rem;
+    letter-spacing: 0.08em;
+  }
+
+  .hud-actions {
+    gap: 6px;
+  }
+
+  .shift-toggle {
+    height: 36px;
+    width: 36px;
+  }
+
+  .call {
+    height: 36px;
+    padding: 0 10px;
+    gap: 5px;
+  }
+
+  .call-number {
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 340px) {
+  .brand-tag {
+    display: none !important;
+  }
+  .call-number {
+    display: none !important;
+  }
+  .call {
+    width: 36px;
+    padding: 0;
+    justify-content: center;
   }
 }
 
