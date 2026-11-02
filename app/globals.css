@@ -231,6 +231,9 @@ html:not([data-stage]) .loader {
 main {
   position: relative;
   z-index: 2;
+  /* The text scrims spill past the screen edge on purpose. Clip them, or touch screens
+     around 901-980px wide zoom the whole page out to fit them. */
+  overflow-x: clip;
 }
 
 /* Empty parts of a beat let the pointer through to the 3D pins and the ground grid. */
@@ -370,7 +373,8 @@ html[data-stage='loading'] .pins {
 .hero-title {
   font-family: var(--font-display-stack);
   font-weight: 900;
-  font-size: clamp(3.6rem, 8.6vw, 9rem);
+  /* Capped by height too, so a wide but short window still fits the whole hero. */
+  font-size: clamp(3.6rem, min(8.6vw, 19vh), 9rem);
   line-height: 0.84;
   letter-spacing: -0.01em;
   margin-bottom: 0.3em;
@@ -689,6 +693,17 @@ html[data-stage='loading'] .hud-corners span:nth-child(4) { transform: translate
   pointer-events: none;
   transform: translateY(-8px);
   transition-delay: 0s;
+}
+
+/* On laptop-sized screens the parked truck's readouts would sit on the hero's buttons and
+   scroll cue, so they wait for the run to start. Big monitors have room for both. */
+@media (min-width: 901px) and (max-width: 1500px), (min-width: 901px) and (max-height: 820px) {
+  .hud[data-beat='hero'] .hud-telemetry {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition-delay: 0s;
+  }
 }
 
 /* While the quote form is on screen, the run readouts step aside. */
@@ -1615,12 +1630,294 @@ html[data-theme='day'] .quote-error {
   color: var(--accent);
 }
 
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, max-content));
+  gap: 28px 72px;
+  max-width: 1280px;
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.footer-links h2 {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.footer-links ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+}
+
+.footer-links a {
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+}
+
 .footer-legal {
   margin-top: 56px;
   padding-top: 22px;
   border-top: 1px solid var(--line);
   font-size: 0.8rem;
   color: var(--text-3);
+}
+
+/* ==========================================================================================
+   Landing pages (/services/*, /service-areas/*): text-first, no 3D stage
+   ========================================================================================== */
+.lp-top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px var(--gutter);
+  background: var(--sheet);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+.lp-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  font-family: var(--font-display-stack);
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: 0.01em;
+}
+
+.lp-call {
+  min-height: 42px;
+  padding: 0 16px;
+}
+
+.lp {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 28px var(--gutter) 96px;
+}
+
+.lp-crumbs {
+  display: flex;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+
+.lp-crumbs a {
+  text-decoration: none;
+}
+
+.lp-crumbs a:hover {
+  color: var(--accent);
+}
+
+.lp-head {
+  padding: 40px 0 16px;
+}
+
+.lp-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.lp h1 {
+  margin-top: 10px;
+  font-family: var(--font-display-stack);
+  font-weight: 900;
+  font-size: clamp(2.6rem, 6.4vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.lp-lede {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  color: var(--text-2);
+  max-width: 62ch;
+}
+
+.lp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.lp-creds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-top: 26px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.lp-section {
+  margin-top: 56px;
+}
+
+.lp-section h2,
+.lp-cta h2 {
+  font-family: var(--font-display-stack);
+  font-weight: 800;
+  font-size: clamp(1.7rem, 3.6vw, 2.3rem);
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.lp-section p {
+  color: var(--text-2);
+  max-width: 68ch;
+}
+
+.lp-section p + p {
+  margin-top: 14px;
+}
+
+.lp-list li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--text-2);
+}
+
+.lp-list li + li {
+  margin-top: 8px;
+}
+
+.lp-list li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.65em;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.lp-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lp-tags li {
+  padding: 6px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-size: 0.92rem;
+}
+
+.lp-specs {
+  display: grid;
+  border-top: 1px solid var(--line);
+}
+
+.lp-specs > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.35fr) 1fr;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.lp-specs dt {
+  font-weight: 700;
+}
+
+.lp-specs dd {
+  color: var(--text-2);
+}
+
+.lp-faq details {
+  border-bottom: 1px solid var(--line);
+  padding: 16px 0;
+}
+
+.lp-faq details:first-child {
+  border-top: 1px solid var(--line);
+}
+
+.lp-faq summary {
+  cursor: pointer;
+  font-weight: 700;
+  list-style-position: outside;
+}
+
+.lp-faq details p {
+  margin-top: 10px;
+}
+
+.lp-cta {
+  margin-top: 64px;
+  padding: 36px;
+  border-radius: 16px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.lp-cta p {
+  color: var(--text-2);
+}
+
+.lp-related {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  margin-top: 56px;
+  font-size: 0.95rem;
+}
+
+.lp-related h2 {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.lp-related li + li {
+  margin-top: 6px;
+}
+
+.lp-related a {
+  color: var(--text-2);
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+}
+
+.lp-related a:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 640px) {
+  .lp-brand span {
+    font-size: 1.15rem;
+  }
+
+  .lp-cta {
+    padding: 24px 20px;
+  }
+
+  .lp-related,
+  .footer-links {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ==========================================================================================
@@ -1632,6 +1929,15 @@ html[data-theme='day'] .quote-error {
   }
   .readout-wide {
     display: none;
+  }
+}
+
+/* Short laptop windows (e.g. 1920x1080 at 150% scaling): pull the hero up so the title,
+   buttons and credentials all fit on the first screen. */
+@media (min-width: 901px) and (max-height: 820px) {
+  .hero {
+    padding-top: max(88px, 15vh);
+    padding-bottom: max(48px, 8vh);
   }
 }
 
@@ -1777,9 +2083,11 @@ html[data-theme='day'] .quote-error {
     display: none;
   }
 
+  /* The top padding only matters when the hero outgrows the screen (phones held sideways):
+     it keeps the title clear of the top bar. */
   .hero {
     min-height: 100svh;
-    padding: 0 18px 5svh;
+    padding: 72px 18px 5svh;
   }
 
   /* The hero title floats over the scene on a gradient instead of a card. */
@@ -1800,16 +2108,20 @@ html[data-theme='day'] .quote-error {
     -webkit-backdrop-filter: none;
   }
 
+  /* Side by side while both labels fit on one line; on the narrowest phones they stack
+     instead of breaking the phone number across two lines. */
   .hero-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     margin-top: 22px;
   }
 
   .hero-actions .button {
+    flex: 1 1 0;
     padding: 0 12px;
     font-size: 0.95rem;
+    white-space: nowrap;
   }
 
   .credentials {
@@ -1818,8 +2130,12 @@ html[data-theme='day'] .quote-error {
     font-size: 0.8rem;
   }
 
+  /* Sized from the screen width so "can count on." always fits on one line, with about 15%
+     to spare for phones set to a larger text size. A rem floor here would outgrow the
+     narrowest phones and wrap the title onto three lines. The svh cap keeps it in
+     proportion on phones held sideways. */
   .hero-title {
-    font-size: clamp(3.1rem, 15.5vw, 4.8rem);
+    font-size: clamp(2.25rem, min(14.5vw, 19svh), 4.8rem);
   }
 
   .hero-lede {
@@ -1911,6 +2227,10 @@ html[data-theme='day'] .quote-error {
   .call-number {
     font-size: 0.78rem;
   }
+
+  .hero-actions .button {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 340px) {
@@ -1944,7 +2264,8 @@ html[data-theme='day'] .quote-error {
   .hero-actions,
   .credentials,
   .hud > *,
-  .hud-corners span {
+  .hud-corners span,
+  .loader-inner {
     transform: none !important;
     transition-property: opacity !important;
   }

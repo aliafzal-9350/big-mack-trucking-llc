@@ -3,6 +3,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import 'lenis/dist/lenis.css';
 import './globals.css';
+import { ALL_KEYWORDS, BUSINESS, SITE_URL, businessJsonLd, toJsonLd } from '@/lib/seo';
 
 // Display: condensed industrial grotesk, a cousin of the badge's squared wordmark.
 const display = Big_Shoulders_Display({
@@ -27,31 +28,37 @@ const text = Overpass({
 });
 
 export const metadata = {
-  metadataBase: new URL('https://bigmacktrucking.com'),
-  title: 'Big Mack Trucking LLC | 26ft Dock-High Freight & Logistics',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'Big Mack Trucking | 26 ft Box Truck, Liftgate & Expedited Freight',
+    template: '%s | Big Mack Trucking',
+  },
   description:
-    'Heavy-duty expedited dock-high freight carrier. 26ft Straight Box, Heavy-Duty Liftgate, Industrial Pallet Jack, TWIC Card Certified. USDOT# 3843409 • MC# 1398475. Dispatch: (516) 508-8078.',
-  keywords: [
-    'Big Mack Trucking LLC',
-    'Omari Headley',
-    'Expedited Freight',
-    'Dock High Box Truck',
-    '26ft Box Truck',
-    'Liftgate Trucking',
-    'TWIC Card Certified Carrier',
-    'MC 1398475',
-    'USDOT 3843409',
-    'New York Freight',
-    'Port Logistics',
-  ],
-  authors: [{ name: 'Omari Headley', url: 'mailto:Bigmacklogisticsa1@gmail.com' }],
+    'Expedited 26 ft dock-high box truck freight from New York, nationwide. 3,500-lb liftgate, pallet jack, TWIC-certified for ports and air cargo. 24/7 dispatch (516) 508-8078.',
+  keywords: ALL_KEYWORDS,
+  applicationName: BUSINESS.name,
+  authors: [{ name: BUSINESS.owner, url: SITE_URL }],
+  creator: BUSINESS.name,
+  publisher: BUSINESS.name,
+  category: 'Transportation',
+  formatDetection: { telephone: true, email: true, address: false },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
+  },
   openGraph: {
-    title: 'Big Mack Trucking LLC | Dock-high freight across NY and NJ',
-    description: '26ft Dock-High Straight Box • Heavy-Duty Liftgate • TWIC Card Certified • USDOT 3843409 • MC 1398475',
-    siteName: 'Big Mack Trucking LLC',
-    images: [{ url: '/image/logo-transparent.png', width: 2048, height: 2048, alt: 'Big Mack Trucking LLC emblem' }],
+    title: 'Big Mack Trucking | Expedited box truck freight, NY metro & nationwide',
+    description: '26 ft dock-high box truck • 3,500-lb liftgate • Pallet jack • TWIC certified • USDOT 3843409 • MC 1398475',
+    url: '/',
+    siteName: BUSINESS.name,
     locale: 'en_US',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Big Mack Trucking | Expedited box truck freight',
+    description: '26 ft dock-high box truck with liftgate and TWIC-certified driver. 24/7 dispatch (516) 508-8078.',
   },
 };
 
@@ -74,6 +81,7 @@ export default function RootLayout({ children }) {
         <link rel="preload" href="/models/truck-run.glb" as="fetch" crossOrigin="anonymous" />
       </head>
       <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: toJsonLd(businessJsonLd()) }} />
         {children}
         <Analytics />
         <SpeedInsights />

@@ -6,7 +6,8 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "model": "node scripts/optimize-truck.mjs"
+    "model": "node scripts/optimize-truck.mjs",
+    "og": "node scripts/make-og-image.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^9.117.3",

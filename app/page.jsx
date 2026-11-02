@@ -1,10 +1,14 @@
-import Image from 'next/image';
 import Stage from '@/components/Stage';
 import Hud from '@/components/hud/Hud';
 import SmoothScroll from '@/components/SmoothScroll';
 import QuoteForm from '@/components/QuoteForm';
 import IsoIcon from '@/components/iso/IsoIcon';
-import logo from '@/public/image/logo-transparent.png';
+import SiteFooter from '@/components/SiteFooter';
+
+// The homepage owns the canonical root URL; landing pages set their own.
+export const metadata = {
+  alternates: { canonical: '/' },
+};
 
 function Stop({ n, icon, children }) {
   return (
@@ -30,8 +34,8 @@ export default function HomePage() {
               <span>Freight you</span> <span>can count on.</span>
             </h1>
             <p className="hero-lede">
-              A 26-ft dock-high box truck with a 3,500-lb liftgate, an onboard pallet jack and a TWIC-cleared
-              driver. Expedited freight across New York and New Jersey, booked directly with owner Omari Headley.
+              Nationwide expedited box truck freight. 26&apos; dock-high, 3,500-lb liftgate, onboard pallet jack, and a
+              TWIC-cleared driver. Fast, direct, and fully equipped for dock or ground delivery.
             </p>
             <div className="hero-actions">
               <a href="#book" className="button button-primary">
@@ -182,50 +186,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <Image src={logo} alt="Big Mack Trucking LLC" width={72} height={72} />
-            <div>
-              <p className="footer-name">Big Mack Trucking LLC</p>
-              <p>Expedited dock-high freight across New York and New Jersey. Principal: Omari Headley.</p>
-            </div>
-          </div>
-          <div className="footer-cols">
-            <div>
-              <h2>Equipment</h2>
-              <ul>
-                <li>26-ft dock-high straight box</li>
-                <li>3,500-lb hydraulic liftgate</li>
-                <li>Onboard pallet jack</li>
-                <li>Ratchet straps and E-track</li>
-              </ul>
-            </div>
-            <div>
-              <h2>Authority</h2>
-              <ul>
-                <li>USDOT 3843409</li>
-                <li>MC 1398475</li>
-                <li>26,000 lb GVWR</li>
-                <li>TWIC-certified driver</li>
-              </ul>
-            </div>
-            <div>
-              <h2>Dispatch</h2>
-              <ul>
-                <li>
-                  <a href="tel:5165088078">(516) 508-8078</a>
-                </li>
-                <li>
-                  <a href="mailto:Bigmacklogisticsa1@gmail.com">Bigmacklogisticsa1@gmail.com</a>
-                </li>
-                <li>Answering 24/7</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <p className="footer-legal">© {new Date().getFullYear()} Big Mack Trucking LLC. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
