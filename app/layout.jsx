@@ -1,5 +1,5 @@
 import { Big_Shoulders_Display, Big_Shoulders_Stencil_Display, Overpass } from 'next/font/google';
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import 'lenis/dist/lenis.css';
 import './globals.css';
