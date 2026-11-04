@@ -121,8 +121,8 @@ export default function HomePage() {
             </Stop>
             <h2 id="port-title">Straight through the port gate.</h2>
             <p>
-              An active TWIC card means unescorted access to marine terminals and bonded air cargo warehouses: no escort
-              fees and no waiting for one.
+              A TWIC-credentialed driver can meet an important port access requirement. Dispatch confirms terminal
+              entry, appointment and cargo-release requirements before each trip.
             </p>
             <ul className="places">
               <li>Port Newark and Elizabeth Marine Terminal</li>

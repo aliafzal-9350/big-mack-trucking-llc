@@ -152,13 +152,26 @@ export default function LandingPage({ page, kind }) {
 
 export function landingMetadata(page, kind) {
   const path = `${kind === 'service' ? '/services' : '/service-areas'}/${page.slug}`;
+  const labels = {
+    'expedited-freight': 'Expedited Box Truck Freight',
+    'liftgate-delivery': 'Liftgate Delivery Service',
+    '26ft-dock-high-box-truck': '26 ft Dock-High Box Truck',
+    'twic-port-trucking': 'TWIC Port & Terminal Trucking',
+    'air-cargo-recovery': 'JFK & Newark Air Cargo Recovery',
+    'pallet-delivery': 'Direct Pallet Delivery',
+    'new-york-city': 'NYC Box Truck Freight Delivery',
+    'long-island': 'Long Island Box Truck Freight',
+    'new-jersey': 'New Jersey Box Truck Freight',
+    'nationwide': 'Nationwide Expedited Box Truck',
+  };
+  const title = `${labels[page.slug] ?? page.name} | Big Mack Trucking`;
   return {
-    title: page.title,
+    title: { absolute: title },
     description: page.description,
     keywords: page.keywords,
     alternates: { canonical: path },
     openGraph: {
-      title: `${page.title} | ${BUSINESS.shortName}`,
+      title,
       description: page.description,
       url: path,
       siteName: BUSINESS.name,
@@ -169,7 +182,7 @@ export function landingMetadata(page, kind) {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${page.title} | ${BUSINESS.shortName}`,
+      title,
       description: page.description,
       images: ['/opengraph-image.png'],
     },

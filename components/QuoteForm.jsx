@@ -1,12 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { quoteEmail } from '@/lib/quote';
 import { setLoad, useRun } from '@/lib/runStore';
 import IsoIcon from '@/components/iso/IsoIcon';
-
-// TODO: replace with your real Formspree form ID (create a free account at
-// formspree.io using Bigmacklogisticsa1@gmail.com, then swap the value below).
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
 
 const EQUIPMENT = [
   { key: 'liftgate', label: 'Liftgate', note: 'No dock at pickup or drop', icon: 'liftgate' },
@@ -19,24 +16,16 @@ const SLOT_COUNT = 12;
 
 export default function QuoteForm() {
   const load = useRun((r) => r.load);
-  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const [draft, setDraft] = useState('');
 
-  const onSubmit = async (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    setStatus('sending');
-    try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { Accept: 'application/json' },
-      });
-      if (!response.ok) throw new Error(String(response.status));
-      setStatus('sent');
-      form.reset();
-    } catch {
-      setStatus('error');
-    }
+    const data = new FormData(form);
+    if (data.get('_gotcha')) return;
+    const url = quoteEmail(data);
+    setDraft(url);
+    window.location.href = url;
   };
 
   return (
@@ -125,18 +114,13 @@ export default function QuoteForm() {
       </label>
 
       <div className="quote-submit">
-        <button type="submit" className="button button-primary" disabled={status === 'sending'}>
-          {status === 'sending' ? 'Sending quote request…' : 'Send quote request'}
+        <button type="submit" className="button button-primary">
+          Email quote request
         </button>
         <p className="quote-status" role="status">
-          {status === 'sent' ? 'Quote request sent. Dispatch will call you back shortly.' : null}
+          {draft ? <>Your email draft is ready. Send it from your email app to request a quote. <a href={draft}>Open draft again</a>.</> : 'Opens your email app. The request is sent only when you send the email.'}
         </p>
-        {status === 'error' ? (
-          <p className="quote-error" role="alert">
-            The request didn&apos;t go through. Call <a href="tel:5165088078">(516) 508-8078</a> or email{' '}
-            <a href="mailto:Bigmacklogisticsa1@gmail.com">Bigmacklogisticsa1@gmail.com</a>.
-          </p>
-        ) : null}
+        <p className="planner-hint">No email app? Call <a href="tel:5165088078">(516) 508-8078</a> or copy <a href="mailto:Bigmacklogisticsa1@gmail.com">Bigmacklogisticsa1@gmail.com</a>. See our <a href="/privacy-policy">privacy policy</a>.</p>
       </div>
     </form>
   );

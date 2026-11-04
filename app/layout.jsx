@@ -34,7 +34,7 @@ export const metadata = {
     template: '%s | Big Mack Trucking',
   },
   description:
-    'Expedited 26 ft dock-high box truck freight from New York, nationwide. 3,500-lb liftgate, pallet jack, TWIC-certified for ports and air cargo. 24/7 dispatch (516) 508-8078.',
+    'Expedited 26 ft box truck freight from New York, nationwide. Dock-high loading, liftgate and pallet jack. Call dispatch: (516) 508-8078.',
   keywords: ALL_KEYWORDS,
   applicationName: BUSINESS.name,
   authors: [{ name: BUSINESS.owner, url: SITE_URL }],
@@ -54,11 +54,13 @@ export const metadata = {
     siteName: BUSINESS.name,
     locale: 'en_US',
     type: 'website',
+    images: [{ url: '/opengraph-image.png', width: 1200, height: 630, alt: BUSINESS.name }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Big Mack Trucking | Expedited box truck freight',
     description: '26 ft dock-high box truck with liftgate and TWIC-certified driver. 24/7 dispatch (516) 508-8078.',
+    images: ['/opengraph-image.png'],
   },
 };
 

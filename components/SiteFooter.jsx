@@ -70,6 +70,9 @@ export default function SiteFooter() {
           </ul>
         </div>
       </nav>
+      <nav className="footer-legal" aria-label="Company and resources" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px 24px' }}>
+        <Link href="/resources">Freight guides</Link><Link href="/about">About</Link><Link href="/contact">Contact</Link><Link href="/privacy-policy">Privacy policy</Link><Link href="/terms">Terms</Link>
+      </nav>
       <p className="footer-legal">© {new Date().getFullYear()} Big Mack Trucking LLC. All rights reserved.</p>
     </footer>
   );
