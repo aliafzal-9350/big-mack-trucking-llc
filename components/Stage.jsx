@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { mark, run, setRun, startRun, subscribe, useRun } from '@/lib/runStore';
 import { pickQualityTier } from '@/lib/quality';
 import { fontFamily, fontsReady } from '@/lib/fonts';
 import IsoIcon from '@/components/iso/IsoIcon';
+import logo from '@/public/image/logo-transparent.png';
 
 const Scene = dynamic(() => import('@/components/run/Scene'), { ssr: false });
 
@@ -18,8 +20,8 @@ function hasWebGL() {
   }
 }
 
-// Loader: the red/white DOT conspicuity tape every trailer carries, running while the truck
-// loads and filling up once it is on stage.
+// Loader: the company badge and name over the red/white DOT conspicuity tape every trailer
+// carries. The tape runs while the truck loads and fills up once it is on stage.
 function Loader() {
   const stage = useRun((r) => r.stage);
   const [timedOut, setTimedOut] = useState(false);
@@ -31,8 +33,19 @@ function Loader() {
   return (
     <div className="loader" data-hidden={hidden} aria-hidden={hidden}>
       <div className="loader-inner" role="status">
+        {/* The name is spelled out right below, so the badge stays silent for screen readers. */}
+        <div className="loader-mark">
+          <Image src={logo} alt="" width={160} height={160} priority className="loader-badge" />
+        </div>
+        <p className="loader-brand">
+          <span className="loader-name">Big Mack Trucking</span>
+          <span className="loader-tag">Expedited Freight</span>
+        </p>
+        <p className="loader-authority">USDOT 3843409 · MC 1398475</p>
+        <span className="loader-track">
+          <span className="loader-tape" data-done={stage !== 'loading'} />
+        </span>
         <span className="loader-label">Loading the truck</span>
-        <span className="loader-tape" data-done={stage !== 'loading'} />
       </div>
     </div>
   );
