@@ -3,7 +3,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import 'lenis/dist/lenis.css';
 import './globals.css';
-import { ALL_KEYWORDS, BUSINESS, SITE_URL, businessJsonLd, toJsonLd } from '@/lib/seo';
+import { ADSENSE_CLIENT, ALL_KEYWORDS, BUSINESS, SITE_URL, businessJsonLd, toJsonLd } from '@/lib/seo';
 
 // Display: condensed industrial grotesk, a cousin of the badge's squared wordmark.
 const display = Big_Shoulders_Display({
@@ -29,6 +29,7 @@ const text = Overpass({
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
+  ...(ADSENSE_CLIENT && { other: { 'google-adsense-account': ADSENSE_CLIENT } }),
   title: {
     default: 'Big Mack Trucking | 26 ft Box Truck, Liftgate & Expedited Freight',
     template: '%s | Big Mack Trucking',
@@ -80,7 +81,6 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${display.variable} ${stencil.variable} ${text.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <link rel="preload" href="/models/truck-run.glb" as="fetch" crossOrigin="anonymous" />
       </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: toJsonLd(businessJsonLd()) }} />

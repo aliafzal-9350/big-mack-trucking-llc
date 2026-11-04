@@ -23,6 +23,7 @@ function Stop({ n, icon, children }) {
 export default function HomePage() {
   return (
     <>
+      <link rel="preload" href="/models/truck-run.glb" as="fetch" crossOrigin="anonymous" />
       <Stage />
       <SmoothScroll />
       <Hud />
