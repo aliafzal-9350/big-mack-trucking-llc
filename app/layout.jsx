@@ -1,3 +1,4 @@
+import GoogleTag from '@/components/GoogleTag';
 import { Big_Shoulders_Display, Big_Shoulders_Stencil_Display, Overpass } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -80,6 +81,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${display.variable} ${stencil.variable} ${text.variable}`} suppressHydrationWarning>
       <head>
+        <GoogleTag />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
