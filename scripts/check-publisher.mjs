@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 
-const [origin] = process.argv.slice(2);
+const [origin, adsMode = 'off'] = process.argv.slice(2);
+assert(['on', 'off'].includes(adsMode), 'Ad mode must be on or off');
 assert(origin, 'Usage: node scripts/check-publisher.mjs https://site');
 const get = async path => {
   const r = await fetch(new URL(path, origin));
@@ -19,7 +20,7 @@ for (const path of paths) {
   const { status, text } = await get(path);
   assert.equal(status, 200, path);
   assert(text.includes('name="google-adsense-account" content="ca-pub-1895109224491741"'), `${path}: ownership metadata`);
-  assert(!/<script[^>]*src="[^"]*adsbygoogle\.js/.test(text), `${path}: ad requests must wait for consent configuration`);
+  assert.equal(/<script[^>]*src="[^"]*adsbygoogle\.js/.test(text), adsMode === 'on', `${path}: unexpected ad-script state`);
   const title = text.match(/<title>(.*?)<\/title>/s)?.[1];
   const description = text.match(/<meta[^>]*name="description"[^>]*content="([^"]+)"/i)?.[1];
   assert(!titles.has(title), `${path}: duplicate title`);
@@ -32,4 +33,4 @@ for (const path of paths) {
   rows.push({ path, title, mainWordsApprox: words });
 }
 assert(paths.includes('/editorial-policy'));
-console.log(JSON.stringify({ origin, pages: paths.length, checks: 'Unique metadata, ads.txt, ownership, no premature ad scripts, guide anchors: PASS', pagesInspected: rows }, null, 2));
+console.log(JSON.stringify({ origin, pages: paths.length, checks: 'Unique metadata, ads.txt, ownership, expected ad-script state, guide anchors: PASS', pagesInspected: rows }, null, 2));

@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+const [origin, pathname] = process.argv.slice(2);
+assert(origin && pathname, 'Usage: node scripts/check-guide-content.mjs ORIGIN /resources/slug');
+const response = await fetch(new URL(pathname, origin));
+assert.equal(response.status, 200);
+const html = await response.text();
+const article = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i)?.[1];
+assert(article, 'Article must be server-rendered');
+const prose = article.replace(/<(script|style|nav|header|aside)\b[^>]*>[\s\S]*?<\/\1>/gi, '').replace(/<[^>]+>/g, ' ').replace(/&(?:[a-z]+|#\d+);/gi, ' ');
+const words = prose.trim().split(/\s+/).length;
+assert(words >= 1000, `Expected at least 1,000 article words, got ${words}`);
+assert(/<meta[^>]*property="og:type"[^>]*content="article"/.test(html), 'Article sharing metadata');
+const jsonLd = [...html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/gs)].map(m => JSON.parse(m[1]));
+assert(jsonLd.some(d => d['@type'] === 'Article' && d.dateModified === '2026-11-06'), 'Accurate Article modification date');
+assert(html.includes('<time dateTime="2026-11-06"') || html.includes('<time datetime="2026-11-06"'), 'Visible update date');
+console.log(JSON.stringify({ url: new URL(pathname, origin).href, articleWordsApprox: words, checks: 'server-rendered long-form article, article metadata and modification date: PASS' }, null, 2));
